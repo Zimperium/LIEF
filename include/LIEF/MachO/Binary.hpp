@@ -765,7 +765,9 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   // Check if the binary is supporting ARM64 pointer authentication (arm64e)
   bool support_arm64_ptr_auth() const {
+#ifndef CPU_SUBTYPE_ARM64E
     static constexpr auto CPU_SUBTYPE_ARM64E = 2;
+#endif
     return header().cpu_type() == Header::CPU_TYPE::ARM64 &&
            (header().cpu_subtype() & ~Header::CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64E;
   }
