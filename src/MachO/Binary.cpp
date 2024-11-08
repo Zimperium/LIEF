@@ -886,9 +886,8 @@ ok_error_t Binary::shift(size_t value) {
         if (section->offset() >= loadcommands_end) {
           section->offset(section->offset() + value);
           section->virtual_address(section->virtual_address() + value);
-        }
-
-        if (section->type() == Section::TYPE::ZEROFILL) {
+        } else if (section->type() == Section::TYPE::ZEROFILL ||
+                   section->type() == Section::TYPE::THREAD_LOCAL_ZEROFILL) {
           section->virtual_address(section->virtual_address() + value);
         }
       }
@@ -1190,7 +1189,7 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
         section->virtual_address(section->virtual_address() + size_aligned);
       }
 
-      if (section->type() == Section::TYPE::ZEROFILL &&
+      if ((section->type() == Section::TYPE::ZEROFILL || section->type() == Section::TYPE::THREAD_LOCAL_ZEROFILL) &&
           section->virtual_address() > last_va)
       {
         section->virtual_address(section->virtual_address() + size_aligned);
