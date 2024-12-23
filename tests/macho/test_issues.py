@@ -57,3 +57,13 @@ def test_1132():
         if can_cache_segment(seg):
             assert binary.segment_from_offset(seg.file_offset) == seg
 
+def test_TODO():
+    binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin')).at(0)
+
+    much_aligned = lief.MachO.Section("__much_aligned")
+    much_aligned.alignment = 15
+    binary.add_section(much_aligned)
+    binary.shift(1)
+
+    checked, err = lief.MachO.check_layout(binary)
+    assert checked, err

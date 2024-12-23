@@ -861,6 +861,14 @@ ok_error_t Binary::ensure_command_space(size_t size) {
 ok_error_t Binary::shift(size_t value) {
   value = align(value, page_size());
 
+  // Take into account sections that may have alignment larger than a size of a page.
+  auto it_maxa = std::max_element(sections_.begin(), sections_.end(),
+            [](const Section* a, const Section* b) {
+              return a->alignment() < b->alignment();
+            });
+  const size_t max_alignment = 1 << (*it_maxa)->alignment();
+  value = align(value, max_alignment);
+
   Header& header = this->header();
 
   // Offset of the load commands table
